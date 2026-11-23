@@ -4,3 +4,5 @@ src/generated
 prisma/migrations
 bun.lock
 *.md
+src/components/ui
+src/lib/utils.ts
