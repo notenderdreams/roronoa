@@ -5,8 +5,9 @@ import { getFoundInventory } from "@/queries/handover";
 import { requireAdmin } from "@/lib/guards";
 import { HandoverFilters } from "@/components/HandoverFilters";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ReturnItemButton } from "@/components/HandoverActions";
 
 interface PageProps {
   searchParams: Promise<{
@@ -156,6 +157,18 @@ async function FoundInventoryContent({ searchParams }: PageProps) {
                   </div>
                 </CardContent>
               </div>
+
+              <CardFooter className="border-t bg-muted/10 pt-3">
+                <div className="flex w-full items-center justify-between gap-2">
+                  <Badge
+                    variant="outline"
+                    className="border-emerald-500/40 text-emerald-600 text-[11px] dark:text-emerald-400"
+                  >
+                    In Custody
+                  </Badge>
+                  <ReturnItemButton reportId={item.reportId} itemName={item.name} />
+                </div>
+              </CardFooter>
             </Card>
           ))}
         </div>

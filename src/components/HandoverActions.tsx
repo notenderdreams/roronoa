@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { confirmHandover } from "@/actions/handover";
+import { confirmHandover, returnItem } from "@/actions/handover";
 
 interface ConfirmHandoverButtonProps {
   reportId: string;
@@ -43,6 +43,46 @@ export function ConfirmHandoverButton({ reportId, itemName }: ConfirmHandoverBut
       className="whitespace-nowrap font-medium"
     >
       {isPending ? "Confirming…" : "Confirm Receipt"}
+    </Button>
+  );
+}
+
+interface ReturnItemButtonProps {
+  reportId: string;
+  itemName: string;
+}
+
+export function ReturnItemButton({ reportId, itemName }: ReturnItemButtonProps) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleReturn = () => {
+    if (
+      !confirm(`Mark "${itemName}" (${reportId}) as returned to its owner? This cannot be undone.`)
+    ) {
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        const res = await returnItem({ reportId });
+        if (res.success) {
+          toast.success(`Item ${res.reportId} marked as returned to owner.`);
+        }
+      } catch (err) {
+        toast.error((err as Error).message || "Failed to mark item as returned.");
+      }
+    });
+  };
+
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={handleReturn}
+      disabled={isPending}
+      className="whitespace-nowrap font-medium border-emerald-500/40 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-950/40"
+    >
+      {isPending ? "Marking…" : "Mark as Returned"}
     </Button>
   );
 }

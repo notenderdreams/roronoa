@@ -110,7 +110,7 @@ bun run dev     # runs the Next.js dev server on http://localhost:3000
 ### Credentials
 - **Admin account:**
   - Email: `admin@iut-dhaka.edu` (or username `admin`)
-  - Password: `change-me-123`
+  - Password:  `change-me-123`
 - **Student account:**
   - Email: `student@iut-dhaka.edu`
   - Password: `password123`

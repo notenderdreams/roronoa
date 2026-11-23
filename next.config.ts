@@ -6,7 +6,14 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   // Bun runtime can't resolve Turbopack's hashed external names (e.g. "pg-587764…"),
   // so bundle the DB packages instead of externalizing them.
-  transpilePackages: ["@prisma/client", "@prisma/adapter-pg", "pg"],
+  transpilePackages: [
+    "@prisma/client",
+    "@prisma/adapter-pg",
+    "pg",
+    "@aws-sdk/client-s3",
+    "@aws-sdk/s3-request-presigner",
+    "@aws-sdk/lib-storage",
+  ],
   turbopack: {
     rules: {
       "*.css": {
