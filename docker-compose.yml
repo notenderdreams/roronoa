@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: roronoa
+      POSTGRES_PASSWORD: roronoa
+      POSTGRES_DB: roronoa
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  # S3-compatible storage (stand-in for Cloudflare R2). Top-level dirs in /data become buckets,
+  # so `mkdir` creates the bucket without an init container.
+  s3:
+    image: minio/minio
+    entrypoint: ["/bin/sh", "-c", "mkdir -p /data/roronoa && exec minio server /data --console-address :9001"]
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio12345
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [s3data:/data]
+
+volumes:
+  pgdata:
+  s3data:
