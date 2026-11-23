@@ -6,6 +6,49 @@ import { requireAdmin } from "@/lib/guards";
 import { confirmHandoverSchema, type ConfirmHandoverInput } from "@/lib/schemas";
 import { logAuditEvent } from "@/lib/audit";
 
+export async function returnItem(input: ConfirmHandoverInput) {
+  const admin = await requireAdmin();
+  const parsed = confirmHandoverSchema.parse(input);
+
+  const updatedReport = await db.$transaction(async (tx) => {
+    const report = await tx.foundReport.findUnique({
+      where: { reportId: parsed.reportId },
+    });
+
+    if (!report) {
+      throw new Error(`Report "${parsed.reportId}" was not found.`);
+    }
+
+    if (report.status !== "IN_CUSTODY") {
+      throw new Error(
+        `Report "${parsed.reportId}" is not in custody (status: ${report.status.replace(/_/g, " ").toLowerCase()}).`,
+      );
+    }
+
+    const updated = await tx.foundReport.update({
+      where: { id: report.id },
+      data: { status: "RETURNED" },
+    });
+
+    await logAuditEvent(tx, {
+      actorId: admin.id,
+      action: "ITEM_RETURNED",
+      entityId: report.id,
+    });
+
+    return updated;
+  });
+
+  revalidatePath("/admin/inventory");
+  revalidatePath("/");
+
+  return {
+    success: true,
+    reportId: updatedReport.reportId,
+    status: updatedReport.status,
+  };
+}
+
 export async function confirmHandover(input: ConfirmHandoverInput) {
   // 1. Authorization guard
   const admin = await requireAdmin();

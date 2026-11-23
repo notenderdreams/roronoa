@@ -4,6 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SignOutButton } from "@/components/AuthForms";
 import { getSession } from "@/lib/guards";
+import { db } from "@/lib/db";
+
+async function AdminStats() {
+  const [pending, inCustody, returned] = await Promise.all([
+    db.foundReport.count({ where: { status: "PENDING_HANDOVER" } }),
+    db.foundReport.count({ where: { status: "IN_CUSTODY" } }),
+    db.foundReport.count({ where: { status: "RETURNED" } }),
+  ]);
+
+  return (
+    <div className="grid grid-cols-3 gap-3 w-full text-center mt-2">
+      <Link
+        href="/admin/handovers"
+        className="rounded-lg border bg-muted/40 p-3 hover:bg-muted/70 transition-colors"
+      >
+        <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{pending}</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5">Pending</p>
+      </Link>
+      <Link
+        href="/admin/inventory"
+        className="rounded-lg border bg-muted/40 p-3 hover:bg-muted/70 transition-colors"
+      >
+        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{inCustody}</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5">In Custody</p>
+      </Link>
+      <div className="rounded-lg border bg-muted/40 p-3">
+        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{returned}</p>
+        <p className="text-[11px] text-muted-foreground mt-0.5">Returned</p>
+      </div>
+    </div>
+  );
+}
 
 async function Who() {
   const session = await getSession();
@@ -36,6 +68,12 @@ async function Who() {
         </p>
         <Badge variant={isAdmin ? "default" : "secondary"}>{session.user.role || "user"}</Badge>
       </div>
+
+      {isAdmin && (
+        <Suspense fallback={<div className="h-16 w-full rounded-lg bg-muted/40 animate-pulse" />}>
+          <AdminStats />
+        </Suspense>
+      )}
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         {isAdmin ? (
