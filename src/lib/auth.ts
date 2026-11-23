@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
@@ -34,6 +34,21 @@ export const auth = betterAuth({
     additionalFields: {
       studentId: { type: "string", required: true, unique: true },
     },
+  },
+  hooks: {
+    // Login accepts email, username (email without the domain) or student ID.
+    // Resolved to an email here so Better Auth only ever sees an email.
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path !== "/sign-in/email") return;
+      const id = String(ctx.body?.email ?? "").trim();
+      if (!id || id.includes("@") || !/^[\w.-]+$/.test(id)) return;
+      const byStudentId = await db.user.findUnique({
+        where: { studentId: id },
+        select: { email: true },
+      });
+      const email = byStudentId?.email ?? `${id.toLowerCase()}@${CAMPUS_DOMAIN}`;
+      return { context: { body: { ...ctx.body, email } } };
+    }),
   },
   databaseHooks: {
     user: {

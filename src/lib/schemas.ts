@@ -28,7 +28,8 @@ export const registerSchema = z.object({
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-  email: z.email("Enter a valid email"),
+  // email, username (email without @domain) or student ID; resolved server-side in lib/auth.ts
+  identifier: z.string().trim().min(1, "Enter your email, username or student ID"),
   password: z.string().min(1, "Enter your password"),
 });
 export type LoginInput = z.infer<typeof loginSchema>;

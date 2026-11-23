@@ -201,6 +201,14 @@ Better Auth, configured in `src/lib/auth.ts`.
 - A domain check alone proves nothing, so login is blocked until the email is verified (`requireEmailVerification`). Unverified logins return 403 and re-send the link.
 - `role` cannot be sent from sign-up (rejected with `FIELD_NOT_ALLOWED`). Everyone starts as `user`.
 
+**Login identifier.** The login form accepts an email, a username, or a student ID.
+- Username = the email without the domain (`mugdho` -> `mugdho@iut-dhaka.edu`). It is not stored, just derived.
+- Student ID is looked up in the DB and mapped to that user's email.
+- Resolved in a Better Auth `hooks.before` hook for `/sign-in/email` (`src/lib/auth.ts`); everything after that is the normal email + password flow, so verification and sessions are unchanged.
+- Unknown identifiers fail with the same "Invalid email or password" as a wrong password, so login can't be used to check who has an account.
+- We did not use Better Auth's `username` plugin: it needs a stored unique username, its own sign-in endpoint and a backfill, for no gain over deriving it from the email.
+- The seeded admin can log in as `admin` or `ADMIN` (its student ID is the literal `ADMIN`).
+
 **Admins** are created by `bun run db:seed`, written straight to the DB (bypasses the domain hook). Change the password after first login.
 
 **How email verification works**

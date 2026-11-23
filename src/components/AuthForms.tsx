@@ -119,11 +119,18 @@ export function LoginForm() {
 
   async function onSubmit(data: LoginInput) {
     setError(undefined);
-    const { error } = await authClient.signIn.email(data);
+    const { error } = await authClient.signIn.email({
+      email: data.identifier,
+      password: data.password,
+    });
     if (error) {
       // 403 = email not verified; a fresh link was sent (sendOnSignIn)
       if (error.status === 403)
-        return router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+        return router.push(
+          data.identifier.includes("@")
+            ? `/verify-email?email=${encodeURIComponent(data.identifier)}`
+            : "/verify-email",
+        );
       return setError(error.message ?? "Could not log in");
     }
     router.push("/");
@@ -139,10 +146,16 @@ export function LoginForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           <FieldGroup>
-            <Field data-invalid={!!e.email}>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
-              <Input id="email" type="email" aria-invalid={!!e.email} {...register("email")} />
-              <FieldError>{e.email?.message}</FieldError>
+            <Field data-invalid={!!e.identifier}>
+              <FieldLabel htmlFor="identifier">Email, username or student ID</FieldLabel>
+              <Input
+                id="identifier"
+                autoComplete="username"
+                autoCapitalize="none"
+                aria-invalid={!!e.identifier}
+                {...register("identifier")}
+              />
+              <FieldError>{e.identifier?.message}</FieldError>
             </Field>
             <Field data-invalid={!!e.password}>
               <FieldLabel htmlFor="password">Password</FieldLabel>
