@@ -24,6 +24,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  foundReports       FoundReport[] @relation("FoundReports")
+  confirmedHandovers FoundReport[] @relation("ConfirmedHandovers")
+  auditEvents        AuditEvent[]
+
   @@unique([email])
   @@unique([studentId])
   @@map("user")
@@ -76,4 +80,47 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum FoundStatus {
+  PENDING_HANDOVER
+  IN_CUSTODY
+  RETURNED
+}
+
+model FoundReport {
+  id            String      @id @default(uuid())
+  reportId      String      @unique
+  name          String
+  category      String
+  description   String
+  location      String
+  foundAt       DateTime
+  imageKey      String?
+  status        FoundStatus @default(PENDING_HANDOVER)
+  finderId      String
+  finder        User        @relation("FoundReports", fields: [finderId], references: [id])
+  handedOverAt  DateTime?
+  confirmedById String?
+  confirmedBy   User?       @relation("ConfirmedHandovers", fields: [confirmedById], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([status])
+  @@index([finderId])
+  @@index([confirmedById])
+  @@map("found_report")
+}
+
+model AuditEvent {
+  id        String   @id @default(uuid())
+  actorId   String
+  actor     User     @relation(fields: [actorId], references: [id])
+  action    String
+  entityId  String
+  createdAt DateTime @default(now())
+
+  @@index([actorId])
+  @@index([entityId])
+  @@map("audit_event")
 }

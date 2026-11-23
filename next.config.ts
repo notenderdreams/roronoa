@@ -8,11 +8,9 @@ const nextConfig: NextConfig = {
   // so bundle the DB packages instead of externalizing them.
   transpilePackages: ["@prisma/client", "@prisma/adapter-pg", "pg"],
   turbopack: {
-    root: process.cwd(),
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
       },
     },
   },

@@ -5,7 +5,7 @@ services:
       POSTGRES_USER: roronoa
       POSTGRES_PASSWORD: roronoa
       POSTGRES_DB: roronoa
-    ports: ["5432:5432"]
+    ports: ["5433:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
 
   # S3-compatible storage (stand-in for Cloudflare R2). Create the bucket with `bun run s3:init`.

@@ -14,6 +14,8 @@ const verifyEmail = !(
 if (!verifyEmail) console.warn("[auth] SKIP_EMAIL_VERIFICATION is on: emails are NOT verified");
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,

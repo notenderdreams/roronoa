@@ -33,3 +33,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Enter your password"),
 });
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const ITEM_CATEGORIES = [
+  "ELECTRONICS",
+  "CARDS_AND_IDS",
+  "KEYS",
+  "BOOKS_AND_STATIONERY",
+  "BAGS_AND_WALLETS",
+  "CLOTHING_AND_ACCESSORIES",
+  "DOCUMENTS",
+  "OTHER",
+] as const;
+export type ItemCategory = (typeof ITEM_CATEGORIES)[number];
+
+export const confirmHandoverSchema = z.object({
+  reportId: z.string().trim().min(1, "Report ID is required"),
+});
+export type ConfirmHandoverInput = z.infer<typeof confirmHandoverSchema>;
