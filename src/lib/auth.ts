@@ -7,16 +7,20 @@ import { db } from "@/lib/db";
 import { sendMail } from "@/lib/mail";
 import { CAMPUS_DOMAIN, isCampusEmail, studentIdSchema } from "@/lib/schemas";
 
+// Dev shortcut: SKIP_EMAIL_VERIFICATION=true skips verification. Ignored in production.
+const verifyEmail = !(process.env.SKIP_EMAIL_VERIFICATION === "true" && process.env.NODE_ENV !== "production");
+if (!verifyEmail) console.warn("[auth] SKIP_EMAIL_VERIFICATION is on: emails are NOT verified");
+
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: verifyEmail,
     minPasswordLength: 8,
   },
   emailVerification: {
-    sendOnSignUp: true,
-    sendOnSignIn: true,
+    sendOnSignUp: verifyEmail,
+    sendOnSignIn: verifyEmail,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       sendMail(user.email, "Verify your Roronoa account", `Verify: ${url}`).catch((e) => console.error("mail failed:", e));

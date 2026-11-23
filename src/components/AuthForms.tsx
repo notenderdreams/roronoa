@@ -37,8 +37,13 @@ export function RegisterForm() {
 
   async function onSubmit(data: RegisterInput) {
     setError(undefined);
-    const { error } = await authClient.signUp.email(data);
+    const { data: res, error } = await authClient.signUp.email(data);
     if (error) return setError(error.message ?? "Could not register");
+    if (res?.token) {
+      // verification skipped (dev): already signed in
+      router.push("/");
+      return router.refresh();
+    }
     router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
   }
 

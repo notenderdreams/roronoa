@@ -222,6 +222,7 @@ Behavior to know:
 - Each new email has its own token. Older links expire after 1 hour regardless.
 - Delivery depends on Brevo and the recipient's spam filter, so a message can be accepted by Brevo and still land in spam.
 - Seeded admins are created pre-verified, so they skip this flow.
+- `SKIP_EMAIL_VERIFICATION=true` (dev only, ignored when `NODE_ENV=production`) turns the whole flow off: no email is sent, unverified logins are allowed, and registering signs you in immediately. Restart the dev server after changing it.
 - With `BREVO_API_KEY` empty, the link is printed in the dev server console instead of emailed (handy for tests without a key).
 
 Debugging: send failures are logged as `mail failed: Brevo <status>: ...` in the dev server console.
