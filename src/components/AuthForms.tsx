@@ -13,29 +13,17 @@ import {
   type LoginInput,
   type RegisterInput,
 } from "@/lib/schemas";
-
-const input =
-  "w-full rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900";
-const button =
-  "w-full rounded bg-black px-3 py-2 text-white disabled:opacity-50 dark:bg-white dark:text-black";
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block space-y-1 text-sm">
-      <span>{label}</span>
-      {children}
-      {error && <span className="block text-red-600">{error}</span>}
-    </label>
-  );
-}
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -58,36 +46,66 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm space-y-4">
-      <h1 className="text-2xl font-semibold">Create account</h1>
-      <Field label="Name" error={e.name?.message}>
-        <input className={input} {...register("name")} />
-      </Field>
-      <Field label="Student ID" error={e.studentId?.message}>
-        <input className={input} inputMode="numeric" {...register("studentId")} />
-      </Field>
-      <Field label="University email" error={e.email?.message}>
-        <input
-          className={input}
-          type="email"
-          placeholder={`you@${CAMPUS_DOMAIN}`}
-          {...register("email")}
-        />
-      </Field>
-      <Field label="Password" error={e.password?.message}>
-        <input className={input} type="password" {...register("password")} />
-      </Field>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button className={button} disabled={formState.isSubmitting}>
-        {formState.isSubmitting ? "Creating…" : "Register"}
-      </button>
-      <p className="text-sm">
-        Have an account?{" "}
-        <Link className="underline" href="/login">
-          Log in
-        </Link>
-      </p>
-    </form>
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>Create account</CardTitle>
+        <CardDescription>Use your @{CAMPUS_DOMAIN} email.</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent>
+          <FieldGroup>
+            <Field data-invalid={!!e.name}>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
+              <Input id="name" aria-invalid={!!e.name} {...register("name")} />
+              <FieldError>{e.name?.message}</FieldError>
+            </Field>
+            <Field data-invalid={!!e.studentId}>
+              <FieldLabel htmlFor="studentId">Student ID</FieldLabel>
+              <Input
+                id="studentId"
+                inputMode="numeric"
+                aria-invalid={!!e.studentId}
+                {...register("studentId")}
+              />
+              <FieldError>{e.studentId?.message}</FieldError>
+            </Field>
+            <Field data-invalid={!!e.email}>
+              <FieldLabel htmlFor="email">University email</FieldLabel>
+              <Input
+                id="email"
+                type="email"
+                placeholder={`you@${CAMPUS_DOMAIN}`}
+                aria-invalid={!!e.email}
+                {...register("email")}
+              />
+              <FieldError>{e.email?.message}</FieldError>
+            </Field>
+            <Field data-invalid={!!e.password}>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Input
+                id="password"
+                type="password"
+                aria-invalid={!!e.password}
+                {...register("password")}
+              />
+              <FieldError>{e.password?.message}</FieldError>
+            </Field>
+            <FieldError>{error}</FieldError>
+          </FieldGroup>
+        </CardContent>
+        <CardFooter className="mt-4 flex-col gap-3">
+          <Button className="w-full" disabled={formState.isSubmitting}>
+            {formState.isSubmitting ? "Creating…" : "Register"}
+          </Button>
+          <p className="text-sm text-muted-foreground">
+            Have an account?{" "}
+            <Link className="underline" href="/login">
+              Log in
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
   );
 }
 
@@ -113,33 +131,53 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-sm space-y-4">
-      <h1 className="text-2xl font-semibold">Log in</h1>
-      <Field label="Email" error={e.email?.message}>
-        <input className={input} type="email" {...register("email")} />
-      </Field>
-      <Field label="Password" error={e.password?.message}>
-        <input className={input} type="password" {...register("password")} />
-      </Field>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button className={button} disabled={formState.isSubmitting}>
-        {formState.isSubmitting ? "Logging in…" : "Log in"}
-      </button>
-      <p className="text-sm">
-        New here?{" "}
-        <Link className="underline" href="/register">
-          Create an account
-        </Link>
-      </p>
-    </form>
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>Log in</CardTitle>
+        <CardDescription>Welcome back to Roronoa.</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <CardContent>
+          <FieldGroup>
+            <Field data-invalid={!!e.email}>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <Input id="email" type="email" aria-invalid={!!e.email} {...register("email")} />
+              <FieldError>{e.email?.message}</FieldError>
+            </Field>
+            <Field data-invalid={!!e.password}>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <Input
+                id="password"
+                type="password"
+                aria-invalid={!!e.password}
+                {...register("password")}
+              />
+              <FieldError>{e.password?.message}</FieldError>
+            </Field>
+            <FieldError>{error}</FieldError>
+          </FieldGroup>
+        </CardContent>
+        <CardFooter className="mt-4 flex-col gap-3">
+          <Button className="w-full" disabled={formState.isSubmitting}>
+            {formState.isSubmitting ? "Logging in…" : "Log in"}
+          </Button>
+          <p className="text-sm text-muted-foreground">
+            New here?{" "}
+            <Link className="underline" href="/register">
+              Create an account
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
   );
 }
 
 export function SignOutButton() {
   const router = useRouter();
   return (
-    <button
-      className="underline"
+    <Button
+      variant="outline"
       onClick={async () => {
         await authClient.signOut();
         router.push("/login");
@@ -147,6 +185,6 @@ export function SignOutButton() {
       }}
     >
       Sign out
-    </button>
+    </Button>
   );
 }

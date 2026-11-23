@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@/components/AuthForms";
 import { getSession } from "@/lib/guards";
 
@@ -7,14 +8,14 @@ async function Who() {
   const session = await getSession();
   if (!session)
     return (
-      <p className="space-x-4">
-        <Link className="underline" href="/login">
-          Log in
-        </Link>
-        <Link className="underline" href="/register">
-          Register
-        </Link>
-      </p>
+      <div className="flex gap-3">
+        <Button asChild>
+          <Link href="/login">Log in</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/register">Register</Link>
+        </Button>
+      </div>
     );
   return (
     <>
