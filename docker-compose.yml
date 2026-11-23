@@ -8,14 +8,13 @@ services:
     ports: ["5432:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
 
-  # S3-compatible storage (stand-in for Cloudflare R2). Top-level dirs in /data become buckets,
-  # so `mkdir` creates the bucket without an init container.
+  # S3-compatible storage (stand-in for Cloudflare R2). Create the bucket with `bun run s3:init`.
   s3:
-    image: minio/minio
-    entrypoint: ["/bin/sh", "-c", "mkdir -p /data/roronoa && exec minio server /data --console-address :9001"]
+    image: rustfs/rustfs:latest
+    command: /data
     environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio12345
+      RUSTFS_ACCESS_KEY: minio
+      RUSTFS_SECRET_KEY: minio12345
     ports: ["9000:9000", "9001:9001"]
     volumes: [s3data:/data]
 
