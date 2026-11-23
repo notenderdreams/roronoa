@@ -2,7 +2,7 @@
 
 Campus lost & found system. Finders submit found items, admins confirm physical handover, owners submit lost reports, admins match and verify.
 
-> Status: auth is built (register with campus email, verify, login, roles). Found/lost reports, handover and the rest are **(planned)**.
+> Status: auth and US-02 (confirm physical handover + admin found inventory feed) are built. US-01 (found reports), US-03 (lost reports), matching and the rest are **(planned)**.
 
 ## 1. Rules
 
