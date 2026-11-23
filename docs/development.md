@@ -51,6 +51,7 @@ After changing `prisma/schema.prisma`: `bun run db:migrate` (creates + applies a
 | `bun run build` / `start` | production build / serve |
 | `bun run lint` | ESLint |
 | `bun run db:up` | `docker compose up -d` |
+| `bun run db:down` | `docker compose down` |
 | `bun run s3:init` | creates the bucket from `S3_BUCKET` (safe to re-run) |
 | `bun run db:migrate` | `prisma migrate dev` |
 | `bun run db:seed` | runs `prisma/seed.ts` directly with Bun |
@@ -65,7 +66,7 @@ Defined in `docker-compose.yml`:
 | `db` | `postgres:16-alpine` | 5432 | user/pass/db all `roronoa` |
 | `s3` | `rustfs/rustfs` | 9000 (API), 9001 (console) | S3-compatible stand-in for Cloudflare R2. Create the bucket with `bun run s3:init`. |
 
-- Stop: `docker compose down`. Wipe data too: `docker compose down -v`.
+- Stop with `bun db:down` to keep local data. Wipe data too: `docker compose down -v`.
 - Alpine Postgres cannot load `pgvector`. If vector search is added later, switch to `pgvector/pgvector:pg16`.
 - `minio/minio` is no longer published on Docker Hub, so we use RustFS (~430 MB, not small). Garage or SeaweedFS are lighter S3-compatible options; the app doesn't change, only the compose service and bucket setup.
 

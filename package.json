@@ -12,6 +12,7 @@
     "fmt": "prettier --write .",
     "fmt:check": "prettier --check .",
     "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
     "s3:init": "bun scripts/s3-init.ts",
     "db:migrate": "bunx --bun prisma migrate dev",
     "db:seed": "bun prisma/seed.ts",
