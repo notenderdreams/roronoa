@@ -8,8 +8,12 @@ async function Who() {
   if (!session)
     return (
       <p className="space-x-4">
-        <Link className="underline" href="/login">Log in</Link>
-        <Link className="underline" href="/register">Register</Link>
+        <Link className="underline" href="/login">
+          Log in
+        </Link>
+        <Link className="underline" href="/register">
+          Register
+        </Link>
       </p>
     );
   return (

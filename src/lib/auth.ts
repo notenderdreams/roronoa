@@ -8,7 +8,9 @@ import { sendMail } from "@/lib/mail";
 import { CAMPUS_DOMAIN, isCampusEmail, studentIdSchema } from "@/lib/schemas";
 
 // Dev shortcut: SKIP_EMAIL_VERIFICATION=true skips verification. Ignored in production.
-const verifyEmail = !(process.env.SKIP_EMAIL_VERIFICATION === "true" && process.env.NODE_ENV !== "production");
+const verifyEmail = !(
+  process.env.SKIP_EMAIL_VERIFICATION === "true" && process.env.NODE_ENV !== "production"
+);
 if (!verifyEmail) console.warn("[auth] SKIP_EMAIL_VERIFICATION is on: emails are NOT verified");
 
 export const auth = betterAuth({
@@ -23,7 +25,9 @@ export const auth = betterAuth({
     sendOnSignIn: verifyEmail,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      sendMail(user.email, "Verify your Roronoa account", `Verify: ${url}`).catch((e) => console.error("mail failed:", e));
+      sendMail(user.email, "Verify your Roronoa account", `Verify: ${url}`).catch((e) =>
+        console.error("mail failed:", e),
+      );
     },
   },
   user: {
@@ -41,8 +45,7 @@ export const auth = betterAuth({
               message: `Use your @${CAMPUS_DOMAIN} email`,
             });
           const id = studentIdSchema.safeParse((user as { studentId?: string }).studentId);
-          if (!id.success)
-            throw new APIError("BAD_REQUEST", { message: "Invalid student ID" });
+          if (!id.success) throw new APIError("BAD_REQUEST", { message: "Invalid student ID" });
           return { data: { ...user, studentId: id.data } };
         },
       },

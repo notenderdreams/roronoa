@@ -14,7 +14,12 @@ export async function sendMail(to: string, subject: string, text: string) {
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": BREVO_API_KEY, "content-type": "application/json" },
-    body: JSON.stringify({ sender: parseFrom(MAIL_FROM), to: [{ email: to }], subject, textContent: text }),
+    body: JSON.stringify({
+      sender: parseFrom(MAIL_FROM),
+      to: [{ email: to }],
+      subject,
+      textContent: text,
+    }),
   });
   if (!res.ok) throw new Error(`Brevo ${res.status}: ${await res.text()}`);
 }

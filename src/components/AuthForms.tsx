@@ -14,10 +14,20 @@ import {
   type RegisterInput,
 } from "@/lib/schemas";
 
-const input = "w-full rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900";
-const button = "w-full rounded bg-black px-3 py-2 text-white disabled:opacity-50 dark:bg-white dark:text-black";
+const input =
+  "w-full rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900";
+const button =
+  "w-full rounded bg-black px-3 py-2 text-white disabled:opacity-50 dark:bg-white dark:text-black";
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block space-y-1 text-sm">
       <span>{label}</span>
@@ -57,7 +67,12 @@ export function RegisterForm() {
         <input className={input} inputMode="numeric" {...register("studentId")} />
       </Field>
       <Field label="University email" error={e.email?.message}>
-        <input className={input} type="email" placeholder={`you@${CAMPUS_DOMAIN}`} {...register("email")} />
+        <input
+          className={input}
+          type="email"
+          placeholder={`you@${CAMPUS_DOMAIN}`}
+          {...register("email")}
+        />
       </Field>
       <Field label="Password" error={e.password?.message}>
         <input className={input} type="password" {...register("password")} />
@@ -67,7 +82,10 @@ export function RegisterForm() {
         {formState.isSubmitting ? "Creating…" : "Register"}
       </button>
       <p className="text-sm">
-        Have an account? <Link className="underline" href="/login">Log in</Link>
+        Have an account?{" "}
+        <Link className="underline" href="/login">
+          Log in
+        </Link>
       </p>
     </form>
   );
@@ -108,7 +126,10 @@ export function LoginForm() {
         {formState.isSubmitting ? "Logging in…" : "Log in"}
       </button>
       <p className="text-sm">
-        New here? <Link className="underline" href="/register">Create an account</Link>
+        New here?{" "}
+        <Link className="underline" href="/register">
+          Create an account
+        </Link>
       </p>
     </form>
   );
