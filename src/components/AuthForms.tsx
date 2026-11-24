@@ -142,8 +142,8 @@ export function LoginForm() {
       password: data.password,
     });
     if (error) {
-      // 403 = email not verified; a fresh link was sent (sendOnSignIn)
-      if (error.status === 403)
+      // a fresh link was sent (sendOnSignIn). Match the code: INVALID_ORIGIN is also a 403.
+      if (error.code === "EMAIL_NOT_VERIFIED")
         return router.push(
           data.identifier.includes("@")
             ? `/verify-email?email=${encodeURIComponent(data.identifier)}`
