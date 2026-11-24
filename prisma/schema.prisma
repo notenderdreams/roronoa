@@ -1,12 +1,3 @@
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-}
-
-datasource db {
-  provider = "postgresql"
-}
-
 model User {
   id            String        @id
   name          String
@@ -20,101 +11,16 @@ model User {
   banReason     String?
   banExpires    DateTime?
   studentId     String
+
   sessions      Session[]
   accounts      Account[]
-  foundReports  FoundReport[]
+
+  foundReports       FoundReport[] @relation("FoundReports")
+  confirmedHandovers FoundReport[] @relation("ConfirmedHandovers")
+
   auditEvents   AuditEvent[]
 
   @@unique([email])
   @@unique([studentId])
   @@map("user")
-}
-
-model Session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy String?
-
-  @@unique([token])
-  @@index([userId])
-  @@map("session")
-}
-
-model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
-
-  @@index([userId])
-  @@map("account")
-}
-
-model Verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
-}
-
-enum FoundReportStatus {
-  PENDING_HANDOVER
-  IN_CUSTODY
-  RETURNED
-}
-
-model FoundReport {
-  id              String            @id @default(cuid())
-  reportId        String            @unique @map("report_id")
-  itemName        String            @map("item_name")
-  itemCategory    String            @map("item_category")
-  itemDescription String?           @map("item_description")
-  latitude        Float
-  longitude       Float
-  locationLabel   String?           @map("location_label")
-  foundAt         DateTime          @map("found_at")
-  imageKey        String?           @map("image_key")
-  founderId       String            @map("founder_id")
-  founder         User              @relation(fields: [founderId], references: [id], onDelete: Restrict)
-  status          FoundReportStatus @default(PENDING_HANDOVER)
-  submissionAt    DateTime          @default(now()) @map("submission_at")
-
-  @@index([founderId, submissionAt])
-  @@index([status, submissionAt])
-  @@map("found_report")
-}
-
-model AuditEvent {
-  id        String   @id @default(cuid())
-  actorId   String   @map("actor_id")
-  actor     User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
-  action    String
-  entityId  String   @map("entity_id")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@index([entityId, createdAt])
-  @@index([actorId, createdAt])
-  @@map("audit_event")
 }
