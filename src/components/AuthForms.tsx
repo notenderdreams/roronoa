@@ -33,16 +33,21 @@ export function RegisterForm() {
   });
   const e = formState.errors;
 
-  async function onSubmit(data: RegisterInput) {
+  async function onSubmit({ name, studentId, email, password }: RegisterInput) {
     setError(undefined);
-    const { data: res, error } = await authClient.signUp.email(data);
+    const { data: res, error } = await authClient.signUp.email({
+      name,
+      studentId,
+      email,
+      password,
+    });
     if (error) return setError(error.message ?? "Could not register");
     if (res?.token) {
       // verification skipped (dev): already signed in
       router.push("/");
       return router.refresh();
     }
-    router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+    router.push(`/verify-email?email=${encodeURIComponent(email)}`);
   }
 
   return (
@@ -85,10 +90,23 @@ export function RegisterForm() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="new-password"
                 aria-invalid={!!e.password}
                 {...register("password")}
               />
               <FieldError>{e.password?.message}</FieldError>
+            </Field>
+            <Field data-invalid={!!e.confirmPassword}>
+              <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                aria-invalid={!!e.confirmPassword}
+                aria-describedby={e.confirmPassword ? "confirmPassword-error" : undefined}
+                {...register("confirmPassword")}
+              />
+              <FieldError id="confirmPassword-error">{e.confirmPassword?.message}</FieldError>
             </Field>
             <FieldError>{error}</FieldError>
           </FieldGroup>

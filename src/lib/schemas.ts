@@ -19,12 +19,18 @@ const campusEmail = z
   .email("Enter a valid email")
   .refine(isCampusEmail, `Use your @${CAMPUS_DOMAIN} email`);
 
-export const registerSchema = z.object({
-  name: z.string().trim().min(2, "Enter your name").max(100),
-  studentId: studentIdSchema,
-  email: campusEmail,
-  password: z.string().min(8, "At least 8 characters").max(128),
-});
+export const registerSchema = z
+  .object({
+    name: z.string().trim().min(2, "Enter your name").max(100),
+    studentId: studentIdSchema,
+    email: campusEmail,
+    password: z.string().min(8, "At least 8 characters").max(128),
+    confirmPassword: z.string().min(1, "Confirm your password"),
+  })
+  .refine((data) => !data.confirmPassword || data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({

@@ -195,7 +195,7 @@ Rules:
 
 Better Auth, configured in `src/lib/auth.ts`.
 
-**Sign-up** takes name, student ID, university email, password.
+**Sign-up** takes name, student ID, university email, and password. The form requires a matching password confirmation before submitting.
 - Email must end in exactly `@iut-dhaka.edu` (`isCampusEmail` in `src/lib/schemas.ts`: lowercase, split at the last `@`, exact domain compare, so `x@iut-dhaka.edu.evil.com` fails).
 - Enforced twice: Zod on the form (UX) and a Better Auth `databaseHooks.user.create.before` hook (the real check; also validates the student ID).
 - Student ID is unique. The format regex is a placeholder (`^\d{6,12}$`); tighten it once the real IUT format is known.
